@@ -1,9 +1,13 @@
 import os
 import requests
 from telegram import Update
-from telegram.ext import Application, CommandHandler, CallbackContext
-# Your Telegram bot token from environment variable
-TELEGRAM_BOT_TOKEN = os.getenv('7691434356:AAFy5-_KrIxiZJ08xGYvq3iilw5htjZrEPU')
+from telegram.ext import Application, CommandHandler, ContextTypes
+
+# Fetch the Telegram bot token from the environment variable
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("Please set the TELEGRAM_BOT_TOKEN environment variable")
 
 # Function to convert text to audio using Ashlynn TTS API
 def ashlynn_tts(text: str) -> str:
@@ -20,7 +24,7 @@ def google_tts(text: str, voice: str = 'en-US-Wavenet-C') -> str:
     return None
 
 # Command handler for /tt command (Ashlynn TTS)
-async def tt_command(update: Update, context: CallbackContext) -> None:
+async def tt_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args:
         text = ' '.join(context.args)
         audio_url = ashlynn_tts(text)
@@ -31,8 +35,8 @@ async def tt_command(update: Update, context: CallbackContext) -> None:
     else:
         await update.message.reply_text("Please provide text to convert.")
 
-# Command handler for /tG command (Google TTS)
-async def tg_command(update: Update, context: CallbackContext) -> None:
+# Command handler for /tg command (Google TTS)
+async def tg_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if context.args:
         text = ' '.join(context.args)
         voice = 'en-US-Wavenet-C'  # Default voice, can be customized if needed
